@@ -15,6 +15,8 @@
 | -r    	| --retweet     	| Show retweets?                      	|
 |       	| --help       	| Show this message and exit.         	|
 
+
+### Manual edits:
 It's needed to add file secret.py with your own Twitter API keys in format:
 
     api_key = '<insert key here>'
