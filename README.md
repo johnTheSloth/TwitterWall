@@ -17,7 +17,7 @@
 
 
 ### Manual edits:
-It's needed to add file secret.py with your own Twitter API keys in format:
+It's needed to add file twitterwall/secret.py with your own Twitter API keys in format:
 
     api_key = '<insert key here>'
     api_secret = '<insert super secret key here>'
