@@ -1,3 +1,3 @@
-from .ukol1 import main
+from .twitterwallCore import main
 
 main()

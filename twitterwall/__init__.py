@@ -1,1 +1,1 @@
-from .ukol1 import *
+from .twitterwallCore import *
