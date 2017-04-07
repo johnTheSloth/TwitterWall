@@ -14,3 +14,7 @@
 | -t    	| --time        	| Time between tweet searches.        	|
 | -r    	| --retweet     	| Show retweets?                      	|
 |       	| --help       	| Show this message and exit.         	|
+
+It's needed to add file secret.py with your own Twitter API keys in format:
+    api_key = '<insert key here>'
+    api_secret = '<insert super secret key here>'
