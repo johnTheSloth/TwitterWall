@@ -5,43 +5,28 @@ import base64
 import requests
 from time import sleep
 from flask import Flask, url_for, render_template
+from jinja2 import Markup
 
-def twitter_session(api_key, api_secret):
-    session = requests.Session()
-    secret = '{}:{}'.format(api_key, api_secret)
-    secret64 = base64.b64encode(secret.encode('ascii')).decode('ascii')
+app = Flask(__name__)
 
-    headers = {
-        'Authorization': 'Basic {}'.format(secret64),
-        'Host': 'api.twitter.com',
-    }
+@click.group()
+def tw():
+    pass
 
-    r = session.post('https://api.twitter.com/oauth2/token',
-                    headers=headers,
-                    data={'grant_type': 'client_credentials'})
-
-    bearer_token = r.json()['access_token']
-
-def bearer_auth(req):
-    req.headers['Authorization'] = 'Bearer ' + bearer_token
-    return req
-
-    session.auth = bearer_auth
-    return session
-
-@click.command()
+@tw.command()
 @click.option('--path', '-p', default=1, help='Path to secret user account config.')
 @click.option('--expression', '-e', default='python', help='Search expression.')
 @click.option('--onload', '-o', default=10, help='Number of tweets on load.')
 @click.option('--time', '-t', default=100, help='Time between tweet searches.')
 @click.option('--retweet', '-r', default=True, help='Show retweets?')
-def run(path, expression, onload, time, retweet):
+def console(path, expression, onload, time, retweet):
     """Simple twitterwall application."""
     session = Session.twitter_session(secret.api_key, secret.api_secret)
     last_id = 0
+
     while True:
         r = session.get('https://api.twitter.com/1.1/search/tweets.json',params={'q': '#'+expression, 'count' : onload, 'since_id' : last_id})
-        for tweet in reversed(r.json()['statuses']):
+        for tweet in r.json()['statuses']:
             if retweet or 'retweeted_status' not in tweet:
                 print("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 print("┃ Tweet ID:  {}".format(tweet['id']))
@@ -54,16 +39,34 @@ def run(path, expression, onload, time, retweet):
         print("-----------------------------")
         sleep(time);
         #onload = 100
-
-def get_first(expression, onload):
-    r = session.get('https://api.twitter.com/1.1/search/tweets.json',params={'q': '#'+expression, 'count' : onload})
-    return r
-
-def get_second(expression, onload, last_id):
-    r = session.get('https://api.twitter.com/1.1/search/tweets.json',params={'q': '#'+expression, 'count' : onload, 'since_id' : last_id})
-    return r
+        return render_template('twitterwall.html', tweets = tweets)
 
 #def main():
 #    run()
+
+@app.route('/twitterwall/')
+@app.route('/twitterwall/<int:onload>')
+def renderPage(expression='python',onload = 10):
+    last_id = 0
+    session = Session.twitter_session(secret.api_key, secret.api_secret)
+    r = session.get('https://api.twitter.com/1.1/search/tweets.json',params={'q': '#'+expression, 'count' : onload, 'since_id' : last_id})
+    return render_template('twitterwall.html', tweets = r.json()['statuses'])
+
+@tw.command()
+def web():
+    """Run the web app"""
+    click.echo('Running the web app')
+    try:
+        app.run(use_reloader = False)
+    except:
+        pass
+
+@app.template_filter('tweetDiv')
+def tweetDiv(tweet):
+    """View text of tweet"""
+    res = '<div class="tweet"><header><img src="' +tweet['user']['profile_image_url'] + '" ><h1>'+tweet['user']['name'] + '</h1><p>'+tweet['text']+'</p></div>'
+    res = res + '<br />'
+    return Markup(res)
+
 if __name__ == "__main__":
-    run()
+    tw()
