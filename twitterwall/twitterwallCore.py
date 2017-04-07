@@ -36,7 +36,7 @@ def bearer_auth(req):
 @click.option('--time', '-t', default=100, help='Time between tweet searches.')
 @click.option('--retweet', '-r', default=True, help='Show retweets?')
 def run(path, expression, onload, time, retweet):
-    """Simple twittewall application."""
+    """Simple twitterwall application."""
     session = Session.twitter_session(secret.api_key, secret.api_secret)
     last_id = 0
     while True:
