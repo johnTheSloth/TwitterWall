@@ -1,7 +1,8 @@
-import secret
-import session as Session
 import click
+import twitterwall.session as Session
+import twitterwall.secret as secret
 import base64
+from datetime import date
 import requests
 from time import sleep
 from flask import Flask, url_for, render_template
@@ -44,7 +45,8 @@ def console(path, expression, onload, time, retweet):
 #def main():
 #    run()
 
-@app.route('/twitterwall/')
+@app.route('/twitterwall/e/<expression>')
+@app.route('/twitterwall/e/<expression>/<int:onload>')
 @app.route('/twitterwall/<int:onload>')
 def renderPage(expression='python',onload = 10):
     last_id = 0
@@ -61,9 +63,16 @@ def web():
 @app.template_filter('tweetDiv')
 def tweetDiv(tweet):
     """View text of tweet"""
-    res = '<div class="panel"><div class="header"><img src="' +tweet['user']['profile_image_url'] + '" ><div class="text">'+tweet['user']['name'] + '</div></div><p>'+tweet['text']+'</p></div>'
-    res = res + '<br />'
+    res = '<div class="panel"><div class="header"><img src="'
+    res = res + tweet['user']['profile_image_url']
+    res = res + '" ><div class="text">'
+    res = res + tweet['user']['name']
+    res = res + '</div></div><p><small><small>'
+    res = res + tweet['created_at'][4:19] + '</small></small><br />'+ tweet['text']
+    res = res + '</p></div><br />'
+
     return Markup(res)
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
+def main():
     tw()

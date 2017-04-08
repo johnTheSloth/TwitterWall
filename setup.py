@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-with open('README') as f:
+with open('README.md') as f:
     long_description = ''.join(f.readlines())
 
 
@@ -29,7 +29,7 @@ setup(
     zip_safe=False,
     entry_points={
         'console_scripts': [
-            'twitterwall = twitterwall.ukol1:main',
+            'twitterwall = twitterwall.twietterwallCore:main',
         ]
     },
     install_requires=['requests', 'click>=6'],
