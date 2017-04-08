@@ -56,15 +56,12 @@ def renderPage(expression='python',onload = 10):
 def web():
     """Run the web app"""
     click.echo('Running the web app')
-    try:
-        app.run(use_reloader = False)
-    except:
-        pass
+    app.run(debug=True)
 
 @app.template_filter('tweetDiv')
 def tweetDiv(tweet):
     """View text of tweet"""
-    res = '<div class="tweet"><header><img src="' +tweet['user']['profile_image_url'] + '" ><h1>'+tweet['user']['name'] + '</h1><p>'+tweet['text']+'</p></div>'
+    res = '<div class="panel"><div class="header"><img src="' +tweet['user']['profile_image_url'] + '" ><div class="text">'+tweet['user']['name'] + '</div></div><p>'+tweet['text']+'</p></div>'
     res = res + '<br />'
     return Markup(res)
 
