@@ -1,6 +1,6 @@
 import click
 import twitterwall.session as Session
-import twitterwall.secret as secret
+import twitterwall.secret
 import base64
 from datetime import date
 import requests
@@ -22,12 +22,12 @@ def tw():
 @click.option('--retweet', '-r', default=True, help='Show retweets?')
 def console(path, expression, onload, time, retweet):
     """Simple twitterwall application."""
-    session = Session.twitter_session(secret.api_key, secret.api_secret)
+    session = Session.twitter_session(twitterwall.secret.api_key, twitterwall.secret.api_secret)
     last_id = 0
 
     while True:
         r = session.get('https://api.twitter.com/1.1/search/tweets.json',params={'q': '#'+expression, 'count' : onload, 'since_id' : last_id})
-        for tweet in r.json()['statuses']:
+        for tweet in reversed(r.json()['statuses']):
             if retweet or 'retweeted_status' not in tweet:
                 print("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 print("┃ Tweet ID:  {}".format(tweet['id']))
@@ -40,7 +40,6 @@ def console(path, expression, onload, time, retweet):
         print("-----------------------------")
         sleep(time);
         #onload = 100
-        return render_template('twitterwall.html', tweets = tweets)
 
 #def main():
 #    run()
@@ -50,7 +49,7 @@ def console(path, expression, onload, time, retweet):
 @app.route('/twitterwall/<int:onload>')
 def renderPage(expression='python',onload = 10):
     last_id = 0
-    session = Session.twitter_session(secret.api_key, secret.api_secret)
+    session = Session.twitter_session(twitterwall.secret.api_key, twitterwall.secret.api_secret)
     r = session.get('https://api.twitter.com/1.1/search/tweets.json',params={'q': '#'+expression, 'count' : onload, 'since_id' : last_id})
     return render_template('twitterwall.html', tweets = r.json()['statuses'])
 

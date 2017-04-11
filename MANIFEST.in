@@ -1,1 +1,3 @@
 include LICENSE
+include twitterwall/session.py
+include twitterwall/secret.py

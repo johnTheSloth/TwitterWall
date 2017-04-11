@@ -29,7 +29,7 @@ setup(
     zip_safe=False,
     entry_points={
         'console_scripts': [
-            'twitterwall = twitterwall.twietterwallCore:main',
+            'twitterwall = twitterwall.twitterwallCore:main',
         ]
     },
     install_requires=['requests', 'click>=6'],
